@@ -1,0 +1,14 @@
+{
+  "data": [
+    {
+      "type": "scatter",
+      "mode": "lines+markers",
+      "x": [1, 2, 3, 4],
+      "y": [5, 9, 4, 12],
+      "line": { "color": "#e05252" }
+    }
+  ],
+  "layout": {
+    "title": { "text": "Author-chosen colour" }
+  }
+}

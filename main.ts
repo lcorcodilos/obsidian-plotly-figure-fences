@@ -1,8 +1,11 @@
 import { App, MarkdownPostProcessorContext, MarkdownRenderChild, Plugin } from "obsidian";
 import type { Config, Data, Layout } from "plotly.js";
+import { destroyColorProbe, domThemeReader } from "./src/colorProbe";
 import { parseFigureJson } from "./src/figure";
+import { mergeLayout } from "./src/mergeLayout";
 import { parseFence } from "./src/parse";
 import { loadPlotly, PlotlyModule } from "./src/plotly";
+import { buildPalette } from "./src/theme";
 import { findFigureFile, readFigureFile } from "./src/vault";
 
 export default class PlotlyFigureFencesPlugin extends Plugin {
@@ -11,12 +14,17 @@ export default class PlotlyFigureFencesPlugin extends Plugin {
 			ctx.addChild(new PlotlyFenceRenderChild(el, source, this.app, ctx));
 		});
 	}
+
+	onunload() {
+		destroyColorProbe();
+	}
 }
 
 /**
  * Parses the fence, resolves and reads the figure JSON, and draws it with
- * Plotly. Every failure from §5's table is surfaced in place instead of
- * failing silently. Theming (§4) arrives in Phase 4.
+ * Plotly, themed to the current Obsidian theme (§4) and re-themed live on
+ * theme change. Every failure from §5's table is surfaced in place instead
+ * of failing silently.
  */
 class PlotlyFenceRenderChild extends MarkdownRenderChild {
 	private destroyed = false;
@@ -24,6 +32,11 @@ class PlotlyFenceRenderChild extends MarkdownRenderChild {
 	private plotEl: HTMLElement | null = null;
 	private plotly: PlotlyModule | null = null;
 	private plotted = false;
+	// The figure's own layout, untouched by any merge. Re-themeing always
+	// merges the fresh palette against *this*, never against a previous
+	// merge result - otherwise the last theme's colours would look like
+	// author intent and freeze permanently (§4).
+	private authorLayout: Record<string, unknown> | null = null;
 
 	constructor(
 		containerEl: HTMLElement,
@@ -94,6 +107,7 @@ class PlotlyFenceRenderChild extends MarkdownRenderChild {
 		plotEl.setAttribute("role", "img");
 		plotEl.setAttribute("aria-label", alt);
 		this.plotEl = plotEl;
+		this.authorLayout = layout;
 
 		let plotly: PlotlyModule;
 		try {
@@ -113,8 +127,9 @@ class PlotlyFenceRenderChild extends MarkdownRenderChild {
 			this.resizeObserver?.disconnect();
 			this.resizeObserver = null;
 
+			const themedLayout = this.mergeWithPalette(layout);
 			plotly
-				.newPlot(plotEl, data as Data[], layout as Partial<Layout>, config)
+				.newPlot(plotEl, data as Data[], themedLayout as Partial<Layout>, config)
 				.catch((e: Error) => {
 					this.plotted = false;
 					if (this.destroyed) return;
@@ -132,5 +147,18 @@ class PlotlyFenceRenderChild extends MarkdownRenderChild {
 			this.resizeObserver = new ResizeObserver(draw);
 			this.resizeObserver.observe(plotEl);
 		}
+
+		this.registerEvent(this.app.workspace.on("css-change", () => this.retheme()));
+	}
+
+	private mergeWithPalette(layout: Record<string, unknown>): Record<string, unknown> {
+		const palette = buildPalette(domThemeReader) as unknown as Record<string, unknown>;
+		return mergeLayout(palette, layout);
+	}
+
+	private retheme() {
+		if (!this.plotted || !this.plotEl || !this.plotly || !this.authorLayout) return;
+		const themedLayout = this.mergeWithPalette(this.authorLayout);
+		void this.plotly.relayout(this.plotEl, themedLayout as Partial<Layout>);
 	}
 }
