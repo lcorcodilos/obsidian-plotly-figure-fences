@@ -13,6 +13,7 @@
 	"devDependencies": {
 		"@types/js-yaml": "^4.0.9",
 		"@types/node": "^20.14.2",
+		"@types/plotly.js": "^3.0.13",
 		"builtin-modules": "^3.3.0",
 		"esbuild": "^0.21.5",
 		"obsidian": "^1.5.7-1",
@@ -21,6 +22,7 @@
 		"vitest": "^4.1.11"
 	},
 	"dependencies": {
-		"js-yaml": "^4.1.0"
+		"js-yaml": "^4.1.0",
+		"plotly.js-cartesian-dist": "^4.1.0"
 	}
 }
