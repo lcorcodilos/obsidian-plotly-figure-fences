@@ -23,6 +23,6 @@
 	},
 	"dependencies": {
 		"js-yaml": "^4.1.0",
-		"plotly.js-cartesian-dist": "^4.1.0"
+		"plotly.js-dist": "^4.1.0"
 	}
 }

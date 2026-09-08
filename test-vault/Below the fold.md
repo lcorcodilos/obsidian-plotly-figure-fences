@@ -1,4 +1,4 @@
-l# Below the fold
+# Below the fold
 
 Scroll down past the filler paragraphs below to reach a figure. This
 exercises the zero-width-container fix (plan §5): live preview can mount the
