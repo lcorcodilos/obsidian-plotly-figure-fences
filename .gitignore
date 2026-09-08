@@ -3,3 +3,11 @@ main.js
 main.js.map
 *.js.map
 .DS_Store
+
+# Obsidian's own local state for test-vault/ - not meaningful to commit,
+# and churns every time someone opens the vault.
+test-vault/.obsidian/app.json
+test-vault/.obsidian/appearance.json
+test-vault/.obsidian/core-plugins.json
+test-vault/.obsidian/workspace.json
+test-vault/.obsidian/workspace-mobile.json
