@@ -1,0 +1,12 @@
+.plotly-fence {
+	margin: 1em 0;
+}
+
+.plotly-fence-error {
+	padding: 0.75em 1em;
+	border: 1px solid var(--background-modifier-error);
+	border-radius: var(--radius-s);
+	background-color: var(--background-modifier-error-rgb);
+	color: var(--text-error);
+	font-size: var(--font-ui-small);
+}
