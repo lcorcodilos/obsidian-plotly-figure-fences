@@ -1,6 +1,8 @@
 import { App, MarkdownPostProcessorContext, MarkdownRenderChild, Plugin } from "obsidian";
+import type { Config, Data, Layout } from "plotly.js";
 import { parseFigureJson } from "./src/figure";
 import { parseFence } from "./src/parse";
+import { loadPlotly, PlotlyModule } from "./src/plotly";
 import { findFigureFile, readFigureFile } from "./src/vault";
 
 export default class PlotlyFigureFencesPlugin extends Plugin {
@@ -12,10 +14,17 @@ export default class PlotlyFigureFencesPlugin extends Plugin {
 }
 
 /**
- * Phase 2: parses the fence, resolves and reads the figure JSON, and
- * surfaces every error from §5's table. Still no chart — that's Phase 3.
+ * Parses the fence, resolves and reads the figure JSON, and draws it with
+ * Plotly. Every failure from §5's table is surfaced in place instead of
+ * failing silently. Theming (§4) arrives in Phase 4.
  */
 class PlotlyFenceRenderChild extends MarkdownRenderChild {
+	private destroyed = false;
+	private resizeObserver: ResizeObserver | null = null;
+	private plotEl: HTMLElement | null = null;
+	private plotly: PlotlyModule | null = null;
+	private plotted = false;
+
 	constructor(
 		containerEl: HTMLElement,
 		private source: string,
@@ -27,6 +36,15 @@ class PlotlyFenceRenderChild extends MarkdownRenderChild {
 
 	onload() {
 		void this.render();
+	}
+
+	onunload() {
+		this.destroyed = true;
+		this.resizeObserver?.disconnect();
+		this.resizeObserver = null;
+		if (this.plotted && this.plotEl && this.plotly) {
+			this.plotly.purge(this.plotEl);
+		}
 	}
 
 	private showError(container: HTMLElement, message: string) {
@@ -55,6 +73,7 @@ class PlotlyFenceRenderChild extends MarkdownRenderChild {
 			this.showError(container, `Could not read "${file.path}": ${(e as Error).message}`);
 			return;
 		}
+		if (this.destroyed) return;
 
 		const figure = parseFigureJson(text);
 		if (!figure.ok) {
@@ -62,9 +81,56 @@ class PlotlyFenceRenderChild extends MarkdownRenderChild {
 			return;
 		}
 
-		// Chart rendering arrives in Phase 3; report the successful parse for now.
-		container.createDiv({
-			text: `Parsed ${file.path}: ${figure.data.length} trace(s). alt: ${fence.alt}`,
-		});
+		await this.drawChart(container, figure.data, figure.layout, fence.alt);
+	}
+
+	private async drawChart(
+		container: HTMLElement,
+		data: unknown[],
+		layout: Record<string, unknown>,
+		alt: string,
+	) {
+		const plotEl = container.createDiv({ cls: "plotly-fence-plot" });
+		plotEl.setAttribute("role", "img");
+		plotEl.setAttribute("aria-label", alt);
+		this.plotEl = plotEl;
+
+		let plotly: PlotlyModule;
+		try {
+			plotly = await loadPlotly();
+		} catch (e) {
+			this.showError(container, `Could not load the Plotly library: ${(e as Error).message}`);
+			return;
+		}
+		if (this.destroyed) return;
+		this.plotly = plotly;
+
+		const config: Partial<Config> = { responsive: true, displayModeBar: false };
+
+		const draw = () => {
+			if (this.destroyed || this.plotted || plotEl.clientWidth === 0) return;
+			this.plotted = true;
+			this.resizeObserver?.disconnect();
+			this.resizeObserver = null;
+
+			plotly
+				.newPlot(plotEl, data as Data[], layout as Partial<Layout>, config)
+				.catch((e: Error) => {
+					this.plotted = false;
+					if (this.destroyed) return;
+					plotEl.empty();
+					this.showError(plotEl, `Plotly failed to draw this figure: ${e.message}`);
+				});
+		};
+
+		if (plotEl.clientWidth > 0) {
+			draw();
+		} else {
+			// Live preview can mount this block before it has been laid out
+			// (§5 "zero-width containers"): wait for a real size instead of
+			// drawing a zero-width chart that never fixes itself.
+			this.resizeObserver = new ResizeObserver(draw);
+			this.resizeObserver.observe(plotEl);
+		}
 	}
 }
