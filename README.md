@@ -33,9 +33,9 @@ does not extend it.
 
 - Parses the fence, resolves `figure` by basename anywhere in the vault, and
   reads/parses the referenced JSON.
-- Draws the figure with Plotly (the `plotly-cartesian` distribution, vendored
-  into the plugin — 2D trace types only: scatter, bar, histogram, box,
-  violin, heatmap, contour; no 3D, maps, or WebGL).
+- Draws the figure with Plotly (the full `plotly.js-dist` distribution,
+  vendored into the plugin — every trace type, including 3D, maps, and
+  WebGL, matching what the website supports).
 - Builds a colour palette from Obsidian's own CSS variables so every figure
   matches the active theme (light, dark, or a community theme), and
   re-themes live figures immediately on theme change — no reload. A figure's
@@ -119,6 +119,9 @@ Community plugins, or reload the app, to pick up the new build.
    make sense (not fall back to Plotly's own default palette, which would
    mean the CSS-variable probe failed for that theme).
 10. Confirm the mode bar is hidden by default on a drawn figure.
+11. Open `3D figure (full bundle).md` — a `scatter3d` trace should draw and be
+    orbitable with the mouse. This only works with the full bundle; it's the
+    one case that exercises why the plugin moved off cartesian-only.
 
 `isDesktopOnly` is `false` (Plotly should work in Obsidian's mobile webview),
 but this has not been tested on mobile.

@@ -1,0 +1,14 @@
+{
+  "data": [
+    {
+      "type": "scatter3d",
+      "mode": "lines+markers",
+      "x": [1, 2, 3, 4, 5],
+      "y": [1, 4, 9, 16, 25],
+      "z": [1, 8, 27, 64, 125]
+    }
+  ],
+  "layout": {
+    "title": { "text": "3D example" }
+  }
+}

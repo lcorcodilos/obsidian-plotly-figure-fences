@@ -304,6 +304,21 @@ the only signal — the author will not have the console open.
 
 ## 6. Bundling Plotly
 
+**Superseded 2026-09-08:** this section originally scoped the plugin to the
+`plotly-cartesian` distribution, for the reason described below. That was
+revisited with the author after measuring the actual cost of the full bundle
+(~2.85x the minified size, ~100ms of additional one-time load latency on the
+first figure drawn per session — see the conversation that led to this change
+for the numbers). The plugin now bundles the **full `plotly.js-dist`**
+distribution, on the condition that the website is expanded to match it, so
+the "preview must never promise what publication can't deliver" invariant
+below still holds. The original reasoning is left in place because it's still
+correct — it's the reason this needs to move in lockstep with the website,
+not a reason to have avoided it forever.
+
+<details>
+<summary>Original text (§6, as first written)</summary>
+
 **Decision: bundle the `plotly-cartesian` distribution (~1.4MB minified).**
 
 This is the same bundle the website ships, and matching it is the point. It
@@ -317,14 +332,19 @@ deliver. **Do not "upgrade" to the full bundle to make a figure work.** If a
 figure needs 3D, that is a conversation about the website's bundle, not a change
 to make here unilaterally.
 
+</details>
+
 ### Requirements
 
 - **Vendor it into the plugin build. Never load Plotly from a CDN.** Obsidian
   plugins must work offline, and pulling remote scripts into the app is both a
   security and a reliability problem.
 - **Load it lazily** — only when the first figure on a page is about to render.
-  A 1.4MB library should not be parsed at app startup for the sake of vaults and
-  sessions that contain no figures.
+  A multi-megabyte library should not be parsed at app startup for the sake of
+  vaults and sessions that contain no figures.
+- **This must stay in lockstep with the website's own bundle.** The plugin and
+  the site must support the same trace types, whichever bundle that turns out
+  to be — that's the whole point of matching in the first place.
 
 ---
 
@@ -442,7 +462,8 @@ notice styling.
 
 If any of these come up, ask — do not decide silently:
 
-- A figure needs a trace type outside the cartesian bundle (§6).
+- A figure needs a trace type outside whatever bundle the plugin and website
+  currently agree on (§6).
 - The fence format seems to need a third key, or a different one (§2).
 - Obsidian's API has changed such that a code-block processor cannot do this.
 - Mobile turns out to be unworkable and you want to set `isDesktopOnly`.
@@ -456,7 +477,7 @@ Do not relitigate these. They were decided with the author.
 | | |
 |---|---|
 | **Scope** | Render only. No authoring helpers, no editor, no vault writes. |
-| **Plotly bundle** | `plotly-cartesian`, matching the website. Not the full bundle. |
+| **Plotly bundle** | Full `plotly.js-dist`, matching the website (superseded §6: originally `plotly-cartesian` only). |
 | **Distribution** | Personal. Manual install or BRAT. Not submitted to community plugins. |
 | **Language / build** | TypeScript, esbuild, single `main.js`. |
 | **Fence format** | Fixed by §2. Shared contract with a published website. |
