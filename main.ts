@@ -32,7 +32,7 @@ class PlotlyFenceRenderChild extends MarkdownRenderChild {
 	private plotEl: HTMLElement | null = null;
 	private plotly: PlotlyModule | null = null;
 	private plotted = false;
-	// The figure's own layout, untouched by any merge. Re-themeing always
+	// The figure's own layout, untouched by any merge. Re-theming always
 	// merges the fresh palette against *this*, never against a previous
 	// merge result - otherwise the last theme's colours would look like
 	// author intent and freeze permanently (§4).
@@ -61,7 +61,9 @@ class PlotlyFenceRenderChild extends MarkdownRenderChild {
 	}
 
 	private showError(container: HTMLElement, message: string) {
-		container.createDiv({ cls: "plotly-fence-error", text: message });
+		const notice = container.createDiv({ cls: "plotly-fence-error" });
+		notice.createSpan({ cls: "plotly-fence-error-icon", text: "⚠" });
+		notice.createSpan({ cls: "plotly-fence-error-message", text: message });
 	}
 
 	private async render() {

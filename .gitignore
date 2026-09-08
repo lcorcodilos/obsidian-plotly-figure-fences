@@ -11,3 +11,7 @@ test-vault/.obsidian/appearance.json
 test-vault/.obsidian/core-plugins.json
 test-vault/.obsidian/workspace.json
 test-vault/.obsidian/workspace-mobile.json
+
+# Community themes installed locally for manual verification (§8 checklist
+# item: "try a community theme") - third-party CSS, not ours to vendor.
+test-vault/.obsidian/themes/

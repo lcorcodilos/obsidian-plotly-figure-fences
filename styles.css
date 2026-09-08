@@ -3,12 +3,26 @@
 }
 
 .plotly-fence-error {
+	display: flex;
+	align-items: flex-start;
+	gap: 0.5em;
 	padding: 0.75em 1em;
 	border: 1px solid var(--background-modifier-error);
 	border-radius: var(--radius-s);
 	background-color: rgba(var(--background-modifier-error-rgb), 0.1);
 	color: var(--text-error);
 	font-size: var(--font-ui-small);
+}
+
+.plotly-fence-error-icon {
+	flex-shrink: 0;
+	line-height: var(--line-height-normal);
+}
+
+.plotly-fence-error-message {
+	white-space: pre-wrap;
+	word-break: break-word;
+	line-height: var(--line-height-normal);
 }
 
 .plotly-fence-plot {
