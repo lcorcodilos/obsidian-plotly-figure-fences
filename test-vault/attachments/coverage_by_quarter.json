@@ -1,0 +1,10 @@
+{
+  "data": [
+    { "type": "scatter", "mode": "lines+markers", "x": [1, 2, 3, 4], "y": [10, 15, 13, 17] }
+  ],
+  "layout": {
+    "title": { "text": "Example" },
+    "xaxis": { "title": { "text": "x" } },
+    "yaxis": { "title": { "text": "y" } }
+  }
+}

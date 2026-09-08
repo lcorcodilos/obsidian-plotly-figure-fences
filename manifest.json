@@ -1,0 +1,9 @@
+{
+	"id": "plotly-figure-fences",
+	"name": "Plotly Figure Fences",
+	"version": "0.1.0",
+	"minAppVersion": "1.4.0",
+	"description": "Renders `plotly` fenced code blocks (figure JSON + alt text) as themed, interactive Plotly charts in reading view and live preview.",
+	"author": "Lucas Corcodilos",
+	"isDesktopOnly": false
+}
