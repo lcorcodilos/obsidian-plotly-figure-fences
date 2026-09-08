@@ -64,8 +64,13 @@ directory.
 3. Reload Obsidian (or toggle the plugin off/on) and enable it under
    Settings → Community plugins.
 
-**Via [BRAT](https://github.com/TfTHacker/obsidian42-brat):** add this
-repository in BRAT for auto-updates.
+**Via [BRAT](https://github.com/TfTHacker/obsidian42-brat):**
+
+1. Install BRAT in the other vault (it's on the community plugin directory).
+2. Command palette → "BRAT: Add a beta plugin for updates" → enter
+   `lcorcodilos/obsidian-plotly-figure-fences`.
+3. BRAT installs the latest GitHub release and checks it for updates. See
+   "Releasing a new version" below for how a release gets published.
 
 ## Development
 
@@ -82,6 +87,23 @@ lookup/reading, `src/colorProbe.ts` for resolving CSS variables); everything
 else — fence parsing (`src/parse.ts`), figure JSON parsing (`src/figure.ts`),
 the theme palette (`src/theme.ts`), and the layout merge (`src/mergeLayout.ts`)
 — is plain, unit-tested logic with no Obsidian or DOM dependency.
+
+## Releasing a new version
+
+`main.js` is a build artifact and isn't committed — `.github/workflows/release.yml`
+builds it and publishes a GitHub release (with `main.js`, `manifest.json`, and
+`styles.css` attached) whenever a tag is pushed, which is what BRAT installs
+and watches for updates.
+
+1. Bump the version in `manifest.json` and `package.json`, and add an entry
+   to `versions.json` mapping it to the required Obsidian version.
+2. Commit that.
+3. Tag the commit with the bare version number (no `v` prefix — it must
+   match `manifest.json` exactly, e.g. `0.2.0`) and push the tag:
+   `git tag 0.2.0 && git push origin 0.2.0`.
+4. CI builds, runs the tests, checks the tag matches `manifest.json`, and
+   publishes a release with the three files attached. BRAT picks it up from
+   there.
 
 ## Manual verification (`test-vault/`)
 
