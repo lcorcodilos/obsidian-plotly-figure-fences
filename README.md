@@ -119,7 +119,8 @@ Community plugins, or reload the app, to pick up the new build.
    make sense (not fall back to Plotly's own default palette, which would
    mean the CSS-variable probe failed for that theme).
 10. Hover over a drawn figure — the mode bar (home/zoom/camera/download)
-    should appear; move away and it should hide again.
+    should appear with no background box and theme-coloured icons, not
+    Plotly's default dark-grey box; move away and it should hide again.
 11. Open `3D figure (full bundle).md` — a `scatter3d` trace should draw and be
     orbitable with the mouse. This only works with the full bundle; it's the
     one case that exercises why the plugin moved off cartesian-only.

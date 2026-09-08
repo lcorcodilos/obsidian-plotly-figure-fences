@@ -10,6 +10,7 @@ export interface Palette {
 	plot_bgcolor: string;
 	xaxis: { gridcolor: string; zerolinecolor: string; linecolor: string };
 	yaxis: { gridcolor: string; zerolinecolor: string; linecolor: string };
+	modebar: { bgcolor: string; color: string; activecolor: string };
 }
 
 /**
@@ -38,5 +39,13 @@ export function buildPalette(theme: ThemeReader): Palette {
 		plot_bgcolor: "rgba(0,0,0,0)",
 		xaxis: buildAxis(),
 		yaxis: buildAxis(),
+		// Plotly's own default mode bar is a hardcoded dark-grey box that
+		// clashes with most Obsidian themes. Transparent background lets the
+		// icons float directly on the note instead.
+		modebar: {
+			bgcolor: "rgba(0,0,0,0)",
+			color: theme.color("--text-muted", "#888888"),
+			activecolor: theme.color("--interactive-accent", "#7f6df2"),
+		},
 	};
 }

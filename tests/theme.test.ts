@@ -14,12 +14,15 @@ describe("buildPalette", () => {
 			fakeReader({
 				"--interactive-accent": "rgb(1, 2, 3)",
 				"--text-normal": "rgb(10, 10, 10)",
+				"--text-muted": "rgb(20, 20, 20)",
 				"--font-text": "Inter, sans-serif",
 			}),
 		);
 		expect(palette.colorway[0]).toBe("rgb(1, 2, 3)");
 		expect(palette.font.color).toBe("rgb(10, 10, 10)");
 		expect(palette.font.family).toBe("Inter, sans-serif");
+		expect(palette.modebar.activecolor).toBe("rgb(1, 2, 3)");
+		expect(palette.modebar.color).toBe("rgb(20, 20, 20)");
 	});
 
 	it("falls back when a theme omits a variable", () => {
@@ -34,5 +37,6 @@ describe("buildPalette", () => {
 		const palette = buildPalette(fakeReader({}));
 		expect(palette.paper_bgcolor).toBe("rgba(0,0,0,0)");
 		expect(palette.plot_bgcolor).toBe("rgba(0,0,0,0)");
+		expect(palette.modebar.bgcolor).toBe("rgba(0,0,0,0)");
 	});
 });
