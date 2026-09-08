@@ -121,7 +121,7 @@ class PlotlyFenceRenderChild extends MarkdownRenderChild {
 		if (this.destroyed) return;
 		this.plotly = plotly;
 
-		const config: Partial<Config> = { responsive: true, displayModeBar: false };
+		const config: Partial<Config> = { responsive: true, displayModeBar: "hover" };
 
 		const draw = () => {
 			if (this.destroyed || this.plotted || plotEl.clientWidth === 0) return;
