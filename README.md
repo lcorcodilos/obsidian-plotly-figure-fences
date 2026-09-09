@@ -97,13 +97,23 @@ and watches for updates.
 
 1. Bump the version in `manifest.json` and `package.json`, and add an entry
    to `versions.json` mapping it to the required Obsidian version.
-2. Commit that.
+2. Commit and push that to `origin` (the tag below only triggers CI once the
+   commit it points at actually exists on GitHub).
 3. Tag the commit with the bare version number (no `v` prefix — it must
    match `manifest.json` exactly, e.g. `0.2.0`) and push the tag:
    `git tag 0.2.0 && git push origin 0.2.0`.
 4. CI builds, runs the tests, checks the tag matches `manifest.json`, and
    publishes a release with the three files attached. BRAT picks it up from
    there.
+
+**If that CI run fails:** fix the problem and commit it, then move the tag to
+the new commit — re-running the old job re-uses the workflow file *as it was
+at the tag's original commit*, so it'll fail the same way again otherwise:
+
+```
+git tag -d 0.2.0 && git push origin :refs/tags/0.2.0
+git tag 0.2.0 && git push origin 0.2.0
+```
 
 ## Manual verification (`test-vault/`)
 
