@@ -25,7 +25,52 @@
 	line-height: var(--line-height-normal);
 }
 
+/*
+ * The frame owns the figure's size (set inline, from the figure's own layout
+ * or from a size the reader dragged it to); the plot fills it and Plotly
+ * autosizes to match.
+ */
+.plotly-fence-frame {
+	position: relative;
+	width: 100%;
+	min-width: 200px;
+	min-height: 120px;
+	overflow: hidden;
+}
+
 .plotly-fence-plot {
 	width: 100%;
-	height: 360px;
+	height: 100%;
+}
+
+.plotly-fence-resize-handle {
+	position: absolute;
+	right: 0;
+	bottom: 0;
+	z-index: 2;
+	width: 16px;
+	height: 16px;
+	cursor: nwse-resize;
+	opacity: 0;
+	transition: opacity 120ms ease-in-out;
+	/* Two diagonal strokes, the usual "drag me" corner. */
+	background-image: linear-gradient(
+		135deg,
+		transparent 0 44%,
+		var(--text-faint) 44% 56%,
+		transparent 56% 68%,
+		var(--text-faint) 68% 80%,
+		transparent 80%
+	);
+	/* Keep a pointer drag from being read as a scroll on touch devices. */
+	touch-action: none;
+}
+
+.plotly-fence-frame:hover .plotly-fence-resize-handle,
+.plotly-fence-frame.is-resizing .plotly-fence-resize-handle {
+	opacity: 1;
+}
+
+.plotly-fence-frame.is-resizing {
+	user-select: none;
 }

@@ -1,0 +1,53 @@
+{
+  "data": [
+    {
+      "type": "scatter",
+      "mode": "lines+markers",
+      "name": "Coverage",
+      "x": ["Q1", "Q2", "Q3", "Q4"],
+      "y": [40, 52, 66, 78],
+      "xaxis": "x",
+      "yaxis": "y"
+    },
+    {
+      "type": "bar",
+      "name": "Findings",
+      "x": ["Q1", "Q2", "Q3", "Q4"],
+      "y": [18, 24, 15, 9],
+      "xaxis": "x2",
+      "yaxis": "y2"
+    },
+    {
+      "type": "scatter",
+      "mode": "markers",
+      "name": "Latency",
+      "x": [1, 2, 3, 4, 5, 6, 7, 8],
+      "y": [120, 96, 140, 88, 72, 110, 64, 58],
+      "xaxis": "x3",
+      "yaxis": "y3"
+    },
+    {
+      "type": "scatter",
+      "mode": "lines",
+      "name": "Drift",
+      "x": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+      "y": [-2, -1, 1, 0, 2, 3, 1, 4, 3, 5],
+      "xaxis": "x4",
+      "yaxis": "y4"
+    }
+  ],
+  "layout": {
+    "height": 900,
+    "width": 1100,
+    "showlegend": false,
+    "title": { "text": "Four panels that need vertical room" },
+    "xaxis": { "domain": [0.0, 0.45], "anchor": "y", "title": { "text": "Quarter" } },
+    "yaxis": { "domain": [0.56, 1.0], "anchor": "x", "title": { "text": "Coverage %" } },
+    "xaxis2": { "domain": [0.55, 1.0], "anchor": "y2", "title": { "text": "Quarter" } },
+    "yaxis2": { "domain": [0.56, 1.0], "anchor": "x2", "title": { "text": "Findings" } },
+    "xaxis3": { "domain": [0.0, 0.45], "anchor": "y3", "title": { "text": "Run" } },
+    "yaxis3": { "domain": [0.0, 0.44], "anchor": "x3", "title": { "text": "Latency (ms)" } },
+    "xaxis4": { "domain": [0.55, 1.0], "anchor": "y4", "title": { "text": "Week" } },
+    "yaxis4": { "domain": [0.0, 0.44], "anchor": "x4", "title": { "text": "Drift" } }
+  }
+}

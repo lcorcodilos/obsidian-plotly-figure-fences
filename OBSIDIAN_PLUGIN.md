@@ -276,6 +276,23 @@ is already visible.
 - Consider hiding Plotly's mode bar by default; it is visual clutter in a note.
   Displaying it on hover is a reasonable alternative. Your call.
 
+**Added 2026-09-10 (sizing).** A default height alone is not enough: a subplot
+figure exported with `layout.height: 900` was being squeezed into the default
+box, because an explicit width/height in the layout also makes Plotly ignore its
+container entirely. Current behaviour, on top of the default above:
+
+- The explicit `width`/`height` are lifted off the layout (top-level *and*
+  template) onto the container, and Plotly autosizes into it.
+- Container height = a size the reader dragged to, else the figure's own height,
+  else the default. The figure's own *width* is ignored; the figure follows the
+  note's column until the reader drags it wider.
+- A drag handle in the bottom-right corner resizes a figure; the size is
+  remembered in the plugin's own data, keyed by note path + figure basename.
+  Nothing is written to the note or to the figure JSON.
+- The theme palette covers every axis the figure actually uses (`xaxis2`,
+  `yaxis3`, ...), not just the primary pair — otherwise subplot panels keep
+  Plotly's default gridlines while the first panel follows the theme.
+
 ### Accessibility
 
 Set the `alt` text as an accessible label on the figure container.

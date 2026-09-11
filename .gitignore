@@ -12,6 +12,9 @@ test-vault/.obsidian/core-plugins.json
 test-vault/.obsidian/workspace.json
 test-vault/.obsidian/workspace-mobile.json
 
+# The plugin's own data (remembered figure sizes) for test-vault/.
+test-vault/.obsidian/plugins/plotly-figure-fences/data.json
+
 # Community themes installed locally for manual verification (§8 checklist
 # item: "try a community theme") - third-party CSS, not ours to vendor.
 test-vault/.obsidian/themes/

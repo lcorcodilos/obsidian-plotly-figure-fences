@@ -36,6 +36,10 @@ does not extend it.
 - Draws the figure with Plotly (the full `plotly.js-dist` distribution,
   vendored into the plugin — every trace type, including 3D, maps, and
   WebGL, matching what the website supports).
+- Sizes the figure to fit it: a figure whose layout asks for `height: 900`
+  (subplots usually do) gets 900px, not a fixed box, and a drag handle in the
+  bottom-right corner lets you resize any figure by hand. See "Figure size"
+  below.
 - Builds a colour palette from Obsidian's own CSS variables so every figure
   matches the active theme (light, dark, or a community theme), and
   re-themes live figures immediately on theme change — no reload. A figure's
@@ -43,6 +47,37 @@ does not extend it.
 - Surfaces every failure in place — malformed YAML, a missing `figure` or
   `alt` key, a file that can't be found, invalid JSON, or a Plotly draw
   error — as a readable notice, never a silent blank gap.
+
+## Figure size
+
+The fence has no size key and isn't going to get one — it's a fixed contract
+shared with the website. Height comes from the figure itself, or from you:
+
+1. **A size you dragged this figure to**, if any.
+2. **The figure's own `layout.height`** (or its template's). A `make_subplots`
+   figure normally carries a height large enough for its panels; that height is
+   honoured as-is.
+3. **360px**, otherwise.
+
+A figure's own `layout.width` is deliberately *ignored*: a figure exported at
+1100px wide should still fit the note's column rather than overhang it. Width
+follows the note until you drag it, and the explicit width/height are lifted off
+the layout onto the container so Plotly autosizes into it (an explicit size
+makes Plotly ignore its container entirely, which is what pinned every figure to
+one box before).
+
+**Dragging:** hover a figure and a handle appears in the bottom-right corner.
+Dragging it down/up changes the height and leaves the width fluid; dragging it
+sideways also pins the width, and dragging back to the column width releases it.
+The size is remembered per figure per note, in the plugin's own data — never in
+the note, and never in the figure JSON (the plugin does not write to the vault's
+content).
+
+**Width past the text column:** dragging wider than Obsidian's *readable line
+length* works, but the figure then overhangs to the right rather than
+re-centring. For a genuinely wide figure, turn off Settings → Appearance →
+Readable line length (or use that note's "Readable line length" toggle) and the
+figure fills the window.
 
 ## What it doesn't do
 
@@ -156,6 +191,15 @@ Community plugins, or reload the app, to pick up the new build.
 11. Open `3D figure (full bundle).md` — a `scatter3d` trace should draw and be
     orbitable with the mouse. This only works with the full bundle; it's the
     one case that exercises why the plugin moved off cartesian-only.
+12. Open `Large subplots.md` — all four panels should have room (the figure's
+    own `height: 900`, not a 360px box), the figure should be the width of the
+    note rather than its own 1100px, and every panel's gridlines should follow
+    the theme, not just the top-left one.
+13. In that same note, hover the figure, drag the bottom-right handle down and
+    sideways — the chart should reflow live while dragging. Scroll away and
+    back, then close and reopen the note: the size should persist. Drag the
+    width back to the column edge and the figure should go fluid again
+    (resize the window afterwards to confirm it follows).
 
 `isDesktopOnly` is `false` (Plotly should work in Obsidian's mobile webview),
 but this has not been tested on mobile.

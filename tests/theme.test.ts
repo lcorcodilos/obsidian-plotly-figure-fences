@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { buildPalette, ThemeReader } from "../src/theme";
+import { buildPalette, collectAxisKeys, ThemeReader } from "../src/theme";
 
 function fakeReader(vars: Record<string, string>): ThemeReader {
 	return {
@@ -38,5 +38,43 @@ describe("buildPalette", () => {
 		expect(palette.paper_bgcolor).toBe("rgba(0,0,0,0)");
 		expect(palette.plot_bgcolor).toBe("rgba(0,0,0,0)");
 		expect(palette.modebar.bgcolor).toBe("rgba(0,0,0,0)");
+	});
+
+	it("themes the primary axes by default", () => {
+		const palette = buildPalette(fakeReader({ "--background-modifier-border": "rgb(5, 5, 5)" }));
+		expect(palette.xaxis.gridcolor).toBe("rgb(5, 5, 5)");
+		expect(palette.yaxis.linecolor).toBe("rgb(5, 5, 5)");
+	});
+
+	it("themes every subplot axis it is given, not just the first panel", () => {
+		const palette = buildPalette(fakeReader({ "--background-modifier-border": "rgb(5, 5, 5)" }), [
+			"xaxis",
+			"yaxis",
+			"xaxis2",
+			"yaxis2",
+		]);
+		expect(palette.xaxis2.gridcolor).toBe("rgb(5, 5, 5)");
+		expect(palette.yaxis2.zerolinecolor).toBe("rgb(5, 5, 5)");
+	});
+});
+
+describe("collectAxisKeys", () => {
+	it("always includes the primary axes", () => {
+		expect(collectAxisKeys({})).toEqual(["xaxis", "yaxis"]);
+	});
+
+	it("picks up subplot axes declared in the layout", () => {
+		const keys = collectAxisKeys({ xaxis: {}, yaxis: {}, xaxis2: {}, yaxis3: {}, title: {} });
+		expect(new Set(keys)).toEqual(new Set(["xaxis", "yaxis", "xaxis2", "yaxis3"]));
+	});
+
+	it("picks up axes only a trace refers to", () => {
+		const keys = collectAxisKeys({}, [{ xaxis: "x2", yaxis: "y2" }, { xaxis: "x" }]);
+		expect(new Set(keys)).toEqual(new Set(["xaxis", "yaxis", "xaxis2", "yaxis2"]));
+	});
+
+	it("ignores layout keys and traces that don't name an axis", () => {
+		const keys = collectAxisKeys({ annotations: [], "xaxis-ish": {} }, [null, "nope", { xaxis: 7 }]);
+		expect(keys).toEqual(["xaxis", "yaxis"]);
 	});
 });
