@@ -1,6 +1,6 @@
 {
 	"name": "plotly-figure-fences",
-	"version": "0.1.0",
+	"version": "0.2.0",
 	"description": "Renders `plotly` fenced code blocks as themed, interactive Plotly charts in Obsidian.",
 	"main": "main.js",
 	"scripts": {
